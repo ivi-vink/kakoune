@@ -13,7 +13,7 @@ eval %sh{
 }
 eval %sh{
     $kak_opt_init_done && exit
-    source ~/projects/kak-dap/rc/kak-dap.kak
+    [[ -f ~/projects/kak-dap/rc/kak-dap.kak ]] && source ~/projects/kak-dap/rc/kak-dap.kak
 }
 set-option global init_done true
 

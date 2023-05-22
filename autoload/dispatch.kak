@@ -19,7 +19,7 @@ define-command -override -params .. -docstring %{
         if [ $# -eq 0 ]; then
         	printf 'terminal bash'
         else
-        	echo "terminal ${@}"
+        	echo "terminal '${@}'"
         fi
     }
 }
