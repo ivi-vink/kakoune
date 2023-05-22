@@ -1,7 +1,3 @@
-# options
-colorscheme gruvbox-dark
-set-option global autoreload yes
-
 # once
 declare-option -hidden bool init_done
 evaluate-commands %sh{
@@ -15,11 +11,20 @@ eval %sh{
     $kak_opt_init_done && exit
     kak-lsp --kakoune -s $kak_session
 }
+eval %sh{
+    $kak_opt_init_done && exit
+    source ~/projects/kak-dap/rc/kak-dap.kak
+}
 set-option global init_done true
 
+# options
+colorscheme gruvbox-dark
+set-option global autoreload yes
+
 # hooks
-hook global WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp) %{
+hook global -group lsp WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp) %{
    lsp-enable-window
+   lsp-enable
    lsp-auto-signature-help-enable
    hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
    hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
@@ -48,8 +53,12 @@ define-command -override -hidden -params 1.. tmux %{
     }
 }
 
+define-command -override -params 1 -docstring %{
+    fd [<arguments>]: utility wrapper
+} fd 'edit %arg{1}'
+complete-command -menu fd shell-script-candidates "fd -t file -L"
+
 # mappings
-alias global sp new
 map global user s ':source ~/.config/kak/autoload/kakrc.kak<ret>' -docstring 'Source user config'
 map global user p ':terminal kakup<ret>' -docstring 'Open new tmux tab/window with a new kakoune server/client'
 map global normal <c-p> ':fd ' -docstring ''
