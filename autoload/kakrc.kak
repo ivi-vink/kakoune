@@ -17,6 +17,12 @@ eval %sh{
 }
 set-option global init_done true
 
+hook global RegisterModified '"' %{
+    nop %sh{
+        tmux set-buffer "$kak_main_reg_dquote"
+    }
+}
+
 # options
 colorscheme gruvbox-dark
 set-option global autoreload yes
