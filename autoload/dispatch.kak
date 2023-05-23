@@ -6,6 +6,10 @@ declare-user-mode start'
 }
 set-option global dispatch_init true
 
+hook global -group dispatch WinSetOption filetype=dispatch %{
+    map window normal i %{:tmux swap-pane -s "kaks@%val{session}:%val{bufname}.0" -t :<ret>:db! "%val{bufname}"<ret>:q!<ret>} -docstring "Go back to terminal mode"
+}
+
 define-command -override -params .. -docstring %{
     Focus [<arguments]: set focus dispatch
 } Focus %{
@@ -16,10 +20,14 @@ define-command -override -params .. -docstring %{
     Start [<arguments]: start interactive processes
 } start %{
     eval %sh{
+        cmd="$*"
         if [ $# -eq 0 ]; then
-        	printf 'terminal bash'
-        else
-        	echo "terminal '${@}'"
+        	cmd='bash'
+        fi
+    	if tmux has-session -t"kaks@$kak_session:dispatch://$cmd"; then
+    		tmux join-pane -t"$kak_client_env_TMUX_PANE" -s"kaks@$kak_session:dispatch://$cmd".0
+    	else
+            	printf "terminal $cmd"
         fi
     }
 }
