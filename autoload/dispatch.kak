@@ -8,7 +8,6 @@ set-option global dispatch_init true
 
 
 hook global -group dispatch WinSetOption filetype=dispatch %{
-    echo "dispatch buf"
     map window normal i %{:pane-insertmode<ret>} -docstring "Go back to terminal mode"
     hook global -once -group dispatch FocusOut .* %{
         echo "focus out"
@@ -18,7 +17,7 @@ hook global -group dispatch WinSetOption filetype=dispatch %{
 define-command -hidden -override -params .. -docstring %{
     Get current dispatch pane from daemon session
 } pane-insertmode %{
-    tmux swap-pane -s "kaks@%val{session}:%val{bufname}.0" -t :
+    tmux swap-pane -s "'kaks@%val{session}:%val{bufname}.0'" -t "%val{client_env_TMUX_PANE}"
     q!
 }
 
