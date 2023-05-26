@@ -8,18 +8,26 @@ set-option global dispatch_init true
 
 
 hook global -group dispatch WinSetOption filetype=dispatch %{
-    map window normal i %{:pane-undaemonize<ret>} -docstring "Go back to terminal mode"
+    echo "dispatch buf"
+    map window normal i %{:pane-insertmode<ret>} -docstring "Go back to terminal mode"
     hook global -once -group dispatch FocusOut .* %{
         echo "focus out"
     }
 }
 
 define-command -hidden -override -params .. -docstring %{
-    Send current pane to daemon session
-} pane-undaemonize %{
+    Get current dispatch pane from daemon session
+} pane-insertmode %{
     tmux swap-pane -s "kaks@%val{session}:%val{bufname}.0" -t :
     q!
 }
+
+define-command -hidden -override -params 1.. -docstring %{
+    Make Dispatch pane to daemon session
+} pane-undaemonize %{
+    tmux join-pane -t "%val{client_env_TMUX_PANE}" -s "'kaks@%val{session}:dispatch://%arg{@}.0'"
+}
+
 define-command -override -params .. -docstring %{
     Focus [<arguments]: set focus dispatch
 } Focus %{
@@ -35,7 +43,7 @@ define-command -override -params .. -docstring %{
         	cmd='bash'
         fi
     	if tmux has-session -t"kaks@$kak_session:dispatch://$cmd"; then
-    		tmux join-pane -t"$kak_client_env_TMUX_PANE" -s"kaks@$kak_session:dispatch://$cmd".0
+		printf "pane-undaemonize '$cmd'"
     	else
             	printf "terminal $cmd"
         fi

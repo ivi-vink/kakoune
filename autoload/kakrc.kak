@@ -17,11 +17,26 @@ eval %sh{
 }
 set-option global init_done true
 
-hook global RegisterModified '"' %{
+# https://discuss.kakoune.com/t/clipboard-integration-using-osc-52/1002/5
+define-command -override -hidden clipboard-sync \
+-docstring "yank selection to terminal clipboard using OSC 52" %{
     nop %sh{
-        tmux set-buffer "$kak_main_reg_dquote"
+        eval set -- "$kak_quoted_selections"
+        copy=$1
+        shift
+        for sel; do
+            copy=$(printf '%s\n%s' "$copy" "$sel")
+        done
+        encoded=$(printf %s "$copy" | base64 | tr -d '\n')
+
+        printf "\e]52;;%s\e\\" "$encoded" >"/proc/$kak_client_pid/fd/0"
     }
 }
+
+hook global -group terminalyank RegisterModified '"' %{ nop %sh{
+    encoded=$(printf %s "$kak_main_reg_dquote" | base64 | tr -d '\n')
+    printf "\e]52;;%s\e\\" "$encoded" >"/proc/$kak_client_pid/fd/0"
+}}
 
 # options
 colorscheme gruvbox-dark
