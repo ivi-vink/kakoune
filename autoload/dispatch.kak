@@ -6,10 +6,20 @@ declare-user-mode start'
 }
 set-option global dispatch_init true
 
+
 hook global -group dispatch WinSetOption filetype=dispatch %{
-    map window normal i %{:tmux swap-pane -s "kaks@%val{session}:%val{bufname}.0" -t :<ret>:db! "%val{bufname}"<ret>:q!<ret>} -docstring "Go back to terminal mode"
+    map window normal i %{:pane-undaemonize<ret>} -docstring "Go back to terminal mode"
+    hook global -once -group dispatch FocusOut .* %{
+        echo "focus out"
+    }
 }
 
+define-command -hidden -override -params .. -docstring %{
+    Send current pane to daemon session
+} pane-undaemonize %{
+    tmux swap-pane -s "kaks@%val{session}:%val{bufname}.0" -t :
+    q!
+}
 define-command -override -params .. -docstring %{
     Focus [<arguments]: set focus dispatch
 } Focus %{
