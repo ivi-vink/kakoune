@@ -107,6 +107,7 @@ map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP er
 define-command -override -params .. -docstring %{
 } nnn %{
     nop %sh{
-        tmux split-pane -t "$kak_client_env_TMUX_PANE" "nnn -p '-' | xargs kak -c '$kak_session'" \; swap-pane -t "$kak_client_env_TMUX_PANE" \; kill-pane -t "$kak_client_env_TMUX_PANE"
+        tmux split-pane -t "$kak_client_env_TMUX_PANE" "nnn -p '-' $kak_buffile | xargs kak -c '$kak_session' -e 'eval %sh{echo \"\$kak_buflist\" | xargs -n1 | grep stdin | xargs printf \"db! %s\\n\"}'" \; swap-pane -t "$kak_client_env_TMUX_PANE" \; kill-pane -t "$kak_client_env_TMUX_PANE"
     }
 }
+map global normal <minus> %{:nnn<ret>} -docstring "Opens nnn at current file"
