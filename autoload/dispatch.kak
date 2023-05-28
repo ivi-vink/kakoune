@@ -14,6 +14,12 @@ hook global -group dispatch WinSetOption filetype=dispatch %{
     }
 }
 
+hook global -group dispatch KakEnd .* %{
+    nop %sh{
+        tmux kill-window -a
+    }
+}
+
 define-command -hidden -override -params .. -docstring %{
     Get current dispatch pane from daemon session
 } pane-insertmode %{
@@ -48,6 +54,7 @@ define-command -override -params .. -docstring %{
         fi
     }
 }
+complete-command start shell
 
 map global normal ` %{:enter-user-mode dispatch<ret>}
 map global dispatch <ret> %{:make<ret>} -docstring 'Dispatch'
