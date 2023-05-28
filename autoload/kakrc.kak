@@ -74,6 +74,11 @@ define-command -override -hidden -params 1.. tmux %{
     }
 }
 
+define-command -override tabonly %{
+    tmux kill-window -a
+}
+alias global tabo tabonly
+
 define-command -override -params 1 -docstring %{
     fd [<arguments>]: utility wrapper
 } fd 'edit %arg{1}'
