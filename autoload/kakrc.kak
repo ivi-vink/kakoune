@@ -43,9 +43,17 @@ colorscheme gruvbox-dark
 set-option global autoreload yes
 
 # hooks
+hook global WinCreate ^[^*]+$ %{editorconfig-load}
+hook global InsertChar \t %{ try %{
+      execute-keys -draft "h<a-h><a-k>\A\h+\z<ret><a-;>;%opt{indentwidth}@"
+}}
+hook global InsertDelete ' ' %{ try %{
+      execute-keys -draft 'h<a-h><a-k>\A\h+\z<ret>i<space><esc><lt>'
+}}
+
 hook global -group lsp WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp) %{
+   set-option global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
    lsp-enable-window
-   lsp-enable
    lsp-auto-signature-help-enable
    hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
    hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
@@ -86,7 +94,7 @@ complete-command -menu fd shell-script-candidates "fd -t file -L"
 
 # mappings
 map global user s ':source ~/.config/kak/autoload/kakrc.kak<ret>' -docstring 'Source user config'
-map global user p ':terminal kakup<ret>' -docstring 'Open new tmux tab/window with a new kakoune server/client'
+map global user p ':terminal "kakup ."<ret>' -docstring 'Open new tmux tab/window with a new kakoune server/client'
 map global normal <c-p> ':fd ' -docstring ''
 map global insert <c-w> '<left><a-;>B<a-;>d' -docstring "Delete word before cursor"
 
