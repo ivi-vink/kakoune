@@ -4,6 +4,7 @@ evaluate-commands %sh{
     $kak_opt_init_done && exit
     printf '
     add-highlighter global/ number-lines -relative
+    add-highlighter global/trailing-whitespace regex "\h+$" 0:Error
     declare-user-mode split
     '
 }
