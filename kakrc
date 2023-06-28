@@ -123,10 +123,31 @@ map global object k '<a-semicolon>lsp-object Class Interface Struct<ret>' -docst
 map global object d '<a-semicolon>lsp-diagnostic-object --include-warnings<ret>' -docstring 'LSP errors and warnings'
 map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
 
-define-command -override -params .. -docstring %{
-} nnn %{
-    nop %sh{
-        tmux split-pane -t "$kak_client_env_TMUX_PANE" "nnn -p '-' $kak_buffile | xargs kak -c '$kak_session' -e 'eval %sh{echo \"\$kak_buflist\" | xargs -n1 | grep stdin | xargs printf \"db! %s\\n\"}'" \; swap-pane -t "$kak_client_env_TMUX_PANE" \; kill-pane -t "$kak_client_env_TMUX_PANE"
-    }
+define-command lf-open -docstring 'Pick a file with lf' %{
+  terminal sh -c %{
+    # Local variables
+    kak_buffile=$1 kak_session=$2 kak_client=$3
+
+    # Create temporary file for selection
+    lf_tmp=$(mktemp "${TMPDIR:-/tmp}"/lf-open.XXXXXXXXXX)
+
+    # Get working directory of current buffer
+    kak_pwd=$(dirname "${kak_buffile}")
+
+    # Pick a file with lf
+    $(lf -selection-path "${lf_tmp}" "${kak_pwd}")
+
+    # Get first line of selection file (ignoring multiple selections)
+    filename=$(head -n 1 "${lf_tmp}")
+
+    # Only echo a command back if there was a selection
+    if [ -n "$filename" ]; then
+      # Construct the command to pass to kakoune
+      kak_cmd="evaluate-commands -client $kak_client edit $filename"
+
+      # Echo the command back to the parent session
+      echo $kak_cmd | kak -p $kak_session
+    fi
+  } -- %val{buffile} %val{session} %val{client}
 }
-map global normal <minus> %{:nnn<ret>} -docstring "Opens nnn at current file"
+map global normal <minus> %{:lf-open<ret>} -docstring "Opens file with lf"
