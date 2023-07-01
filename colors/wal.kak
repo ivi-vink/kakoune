@@ -34,7 +34,7 @@ let tbl = [[scope name colors];
 [global  LineNumberCursor    {fg:  colors.color3        bg:    colors.color5}       ]
 [global  LineNumbersWrapped  {fg:  colors.color5}       ]
 [global  MenuForeground      {fg:  colors.color0        bg:    colors.color4}      ]
-[global  MenuBackground      {fg:  special.foreground   bg:    colors.color0}       ]
+[global  MenuBackground      {fg:  special.foreground   bg:    colors.color5}       ]
 [global  MenuInfo            {fg:  special.background}  ]
 [global  Information         {fg:  special.background   bg:    special.foreground}  ]
 [global  Error               {fg:  special.background   bg:    colors.color1}       ]
