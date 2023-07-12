@@ -104,16 +104,6 @@ map global user p ':terminal "kakup -f"<ret>' -docstring 'Open new tmux tab/wind
 map global normal <c-p> ':fd ' -docstring ''
 map global insert <c-w> '<left><a-;>B<a-;>d' -docstring "Delete word before cursor"
 
-map global normal <c-w> %{:enter-user-mode split<ret>} -docstring "Navigate splits"
-map global split j %{:tmux select-pane -t "{down-of}"<ret>} -docstring "Down"
-map global split k %{:tmux select-pane -t "{up-of}"<ret>} -docstring "Up"
-map global split h %{:tmux select-pane -t "{left-of}"<ret>} -docstring "Left"
-map global split l %{:tmux select-pane -t "{right-of}"<ret>} -docstring "Right"
-map global split = %{:tmux select-layout even-vertical<ret>} -docstring "Balance"
-map global split o %{:tmux kill-pane -a<ret>} -docstring "Only"
-map global split t %{:tmux next-window<ret>} -docstring "Only"
-map global split T %{:tmux previous-window<ret>} -docstring "Only"
-
 map global user l %{:enter-user-mode lsp<ret>} -docstring "LSP mode"
 map global insert <tab> '<a-;>:try lsp-snippets-select-next-placeholders catch %{ execute-keys -with-hooks <lt>tab> }<ret>' -docstring 'Select next snippet placeholder'
 map global object a '<a-semicolon>lsp-object<ret>' -docstring 'LSP any symbol'
@@ -123,7 +113,7 @@ map global object k '<a-semicolon>lsp-object Class Interface Struct<ret>' -docst
 map global object d '<a-semicolon>lsp-diagnostic-object --include-warnings<ret>' -docstring 'LSP errors and warnings'
 map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
 
-define-command lf-open -docstring 'Pick a file with lf' %{
+define-command lf-open -override -docstring 'Pick a file with lf' %{
   terminal sh -c %{
     # Local variables
     kak_buffile=$1 kak_session=$2 kak_client=$3
@@ -135,6 +125,7 @@ define-command lf-open -docstring 'Pick a file with lf' %{
     kak_pwd=$(dirname "${kak_buffile}")
 
     # Pick a file with lf
+    tmux resize-pane -Z
     $(lf -selection-path "${lf_tmp}" "${kak_pwd}")
 
     # Get first line of selection file (ignoring multiple selections)
