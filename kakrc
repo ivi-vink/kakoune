@@ -100,7 +100,8 @@ complete-command -menu fd shell-script-candidates "fd -t file -L"
 
 # mappings
 map global user s ':source ~/.config/kak/autoload/kakrc.kak<ret>' -docstring 'Source user config'
-map global user p ':terminal "kakup -f"<ret>' -docstring 'Open new tmux tab/window with a new kakoune server/client'
+map global user P ':terminal "kakup -f"<ret>' -docstring 'Open new tmux tab/window with a new kakoune server/client'
+map global user p ':terminal "kakup -F"<ret>' -docstring 'Open new tmux tab/window with a new kakoune server/client'
 map global normal <c-p> ':fd ' -docstring ''
 map global insert <c-w> '<left><a-;>B<a-;>d' -docstring "Delete word before cursor"
 
